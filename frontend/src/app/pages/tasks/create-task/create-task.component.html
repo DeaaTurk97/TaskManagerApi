@@ -1,0 +1,84 @@
+<div class="content-card">
+  <h2>Create New Task</h2>
+
+  <div *ngIf="loading" class="loading-message">
+    <p>Loading users for assignment...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+  </div>
+
+  <div *ngIf="successMessage" class="success-message">
+    <p>{{ successMessage }}</p>
+  </div>
+
+  <div *ngIf="!loading && !error" class="task-create-form">
+    <form (ngSubmit)="onCreateTask(taskForm)" #taskForm="ngForm">
+      <div class="form-group">
+        <label for="title">Title:</label>
+        <input
+          type="text"
+          id="title"
+          [(ngModel)]="newTask.title"
+          name="title"
+          required
+          #titleField="ngModel"
+        />
+        <div *ngIf="titleField.invalid && (titleField.dirty || titleField.touched)" class="validation-error">
+          <div *ngIf="titleField.errors?.['required']">Title is required.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description:</label>
+        <textarea
+          id="description"
+          [(ngModel)]="newTask.description"
+          name="description"
+          rows="3"
+          #descriptionField="ngModel"
+          ></textarea>
+        </div>
+
+      <div class="form-group">
+        <label for="status">Status:</label>
+        <select
+          id="status"
+          [(ngModel)]="newTask.status"
+          name="status"
+          required
+          class="status-dropdown"
+          #statusField="ngModel"
+        >
+          <option [ngValue]="null" disabled>Select a status</option> <option *ngFor="let status of taskStatuses" [value]="status">{{ status }}</option>
+        </select>
+        <div *ngIf="statusField.invalid && (statusField.dirty || statusField.touched)" class="validation-error">
+          <div *ngIf="statusField.errors?.['required']">Status is required.</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="assignedTo">Assigned To:</label>
+        <select
+          id="assignedTo"
+          [(ngModel)]="newTask.assignedToUserId"
+          name="assignedTo"
+          class="assigned-user-dropdown"
+          #assignedToField="ngModel"
+          required >
+          <option [ngValue]="null">Unassigned</option>
+          <option *ngFor="let user of users" [ngValue]="user.id">{{ user.username }}</option>
+        </select>
+        <div *ngIf="assignedToField.invalid && (assignedToField.dirty || assignedToField.touched)" class="validation-error">
+          <div *ngIf="assignedToField.errors?.['required']">Assigned To is required.</div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="goBack()">Cancel</button>
+        <button type="submit" class="btn-primary" [disabled]="loading || taskForm.invalid">Create Task</button>
+      </div>
+    </form>
+  </div>
+</div>

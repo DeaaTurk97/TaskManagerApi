@@ -1,0 +1,68 @@
+<div class="update-user-card">
+  <h2>Update User</h2>
+
+  <div *ngIf="loading" class="loading-message">
+    <p>Loading user data...</p>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    <p>{{ errorMessage }}</p>
+  </div>
+  <div *ngIf="successMessage" class="success-message">
+    <p>{{ successMessage }}</p>
+  </div>
+
+  <form *ngIf="!loading && !errorMessage && currentUser" (ngSubmit)="updateUser(userForm)" #userForm="ngForm">
+    <div class="form-group">
+      <label for="id">User ID:</label>
+      <input id="id" type="text" [(ngModel)]="currentUser.id" name="id" disabled />
+    </div>
+
+    <div class="form-group">
+      <label for="username">Username:</label>
+      <input
+        id="username"
+        type="text"
+        [(ngModel)]="userUpdateDto.username"
+        name="username"
+        required
+        #usernameField="ngModel"
+      />
+      <div *ngIf="usernameField.invalid && (usernameField.dirty || usernameField.touched)" class="validation-error">
+        <div *ngIf="usernameField.errors?.['required']">Username is required.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">New Password (leave blank to keep current):</label>
+      <input
+        id="password"
+        type="password"
+        [(ngModel)]="userUpdateDto.password"
+        name="password"
+        placeholder="Enter new password if changing"
+        minlength="8" #passwordField="ngModel" />
+      <div *ngIf="passwordField.value && passwordField.invalid && (passwordField.dirty || passwordField.touched)" class="validation-error">
+        <div *ngIf="passwordField.errors?.['minlength']">Password must be at least 8 characters long.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="role">Role:</label>
+      <select id="role" [(ngModel)]="userUpdateDto.role" name="role" required #roleField="ngModel">
+        <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+      </select>
+      <div *ngIf="roleField.invalid && (roleField.dirty || roleField.touched)" class="validation-error">
+        <div *ngIf="roleField.errors?.['required']">Role is required.</div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="cancel()">Cancel</button>
+      <button type="submit" class="btn-primary" [disabled]="submitting || userForm.invalid">
+        <span *ngIf="!submitting">Update User</span>
+        <span *ngIf="submitting">Updating...</span>
+      </button>
+    </div>
+  </form>
+</div>
