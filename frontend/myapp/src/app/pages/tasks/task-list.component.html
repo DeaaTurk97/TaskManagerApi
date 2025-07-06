@@ -1,0 +1,94 @@
+<div class="content-card">
+  <div class="tasks-header">
+  <h2>Tasks List</h2>
+
+   
+  <button *ngIf="isAdmin" class="btn-success create-task-btn" (click)="goToCreateTask()">
+    <i class="fas fa-plus"></i> Create New Task
+  </button>
+</div>
+  <div *ngIf="loading" class="loading-message">
+    <p>Loading tasks...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+  </div>
+
+  <div *ngIf="!loading && !error && allTasks.length === 0" class="no-tasks-message">
+    <p>No tasks found.</p>
+  </div>
+
+  <div *ngIf="!loading && !error && allTasks.length > 0" class="tasks-table-container">
+    <table class="tasks-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Assigned To</th>
+          <th>Status</th>
+          <th *ngIf="isAdmin">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let task of tasks">
+          <td data-label="ID">{{ task.id }}</td>
+          <td data-label="Title">{{ task.title }}</td>
+          <td data-label="Description">{{ task.description }}</td>
+          <td data-label="Assigned To">{{ task.assignedToUsername || 'Unassigned' }}</td>
+          <td data-label="Status">
+            <ng-container *ngIf="isAdmin || (task.assignedToUserId === authService.getUserInfo()?.id); else displayStatus">
+              <select
+                [(ngModel)]="task.status"
+                (change)="updateTaskStatus(task, task.status)"
+                class="status-dropdown"
+              >
+                <option *ngFor="let status of taskStatuses" [value]="status">{{ status }}</option>
+              </select>
+            </ng-container>
+            <ng-template #displayStatus>
+              <span class="status-badge status-{{ task.status | lowercase }}">{{ task.status }}</span>
+            </ng-template>
+          </td>
+          <td data-label="Actions" *ngIf="isAdmin">
+            <button class="btn-action edit-btn" (click)="editTask(task.id)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-action delete-btn" (click)="confirmDelete(task)"> 
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination-controls" *ngIf="totalPages > 1">
+      <button class="pagination-button" (click)="prevPage()" [disabled]="currentPage === 1">
+        Previous
+      </button>
+      <span class="page-numbers">
+        Page {{ currentPage }} of {{ totalPages }}
+      </span>
+      <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage === totalPages">
+        Next
+      </button>
+    </div>
+
+  <div class="modal-overlay" *ngIf="showConfirmModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Confirm Deletion</h3>
+        <button class="close-button" (click)="cancelDelete()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>{{ confirmMessage }}</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-primary delete-confirm-button" (click)="executeDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

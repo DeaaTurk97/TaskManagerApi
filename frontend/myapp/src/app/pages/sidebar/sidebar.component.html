@@ -1,0 +1,17 @@
+<nav class="dashboard-sidebar">
+  <div class="sidebar-header">
+    <h3>Menu</h3>
+  </div>
+  <ul class="sidebar-menu">
+    <li>
+      <a routerLink="/dashboard/tasks" routerLinkActive="active" class="menu-item">
+        <i class="fas fa-tasks"></i> <span>Tasks</span>
+      </a>
+    </li>
+    <li *ngIf="isAdmin">
+      <a routerLink="/dashboard/users" routerLinkActive="active" class="menu-item">
+        <i class="fas fa-users"></i> <span>Users</span>
+      </a>
+    </li>
+  </ul>
+</nav>

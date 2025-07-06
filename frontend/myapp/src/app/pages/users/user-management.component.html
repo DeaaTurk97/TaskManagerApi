@@ -1,0 +1,82 @@
+<div class="content-card">
+  <div class="users-header">
+    <h2>User Management</h2>
+
+    <button *ngIf="isAdmin" class="btn-success create-user-btn" (click)="goToCreateUser()">
+      <i class="fas fa-plus"></i> Create New User
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-message">
+    <p>Loading users...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+  </div>
+
+  <div *ngIf="!loading && !error && users.length === 0" class="no-users-message">
+    <p>No users found.</p>
+  </div>
+
+  <div *ngIf="!loading && !error && users.length > 0" class="users-table-container">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Role</th>
+          <th *ngIf="isAdmin">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td data-label="ID">{{ user.id }}</td>
+          <td data-label="Username">{{ user.username }}</td>
+          <td data-label="Role">{{ user.role }}</td>
+          <td data-label="Actions" *ngIf="isAdmin">
+            <button class="btn-action edit-btn" (click)="editUser(user.id)">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button
+              class="btn-action delete-btn"
+              (click)="confirmDelete(user)"
+              *ngIf="user.id !== 1 && user.id !== currentLoggedInUserId"
+            >
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+   
+  </div>
+  <div class="pagination-controls" *ngIf="totalPages > 1">
+  <button class="pagination-button" (click)="prevPage()" [disabled]="currentPage === 1">
+    Previous
+  </button>
+  <span class="page-numbers">
+    Page {{ currentPage }} of {{ totalPages }}
+  </span>
+  <button class="pagination-button" (click)="nextPage()" [disabled]="currentPage === totalPages">
+    Next
+  </button>
+</div>
+
+  <div class="modal-overlay" *ngIf="showConfirmModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Confirm Deletion</h3>
+        <button class="close-button" (click)="cancelDelete()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>{{ confirmMessage }}</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-primary delete-confirm-button" (click)="executeDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
